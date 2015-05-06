@@ -56,11 +56,16 @@ public abstract class WebServerBase extends BusModBase {
 
   public static final long DEFAULT_AUTH_TIMEOUT = 5 * 60 * 1000;
 
+  public static final int DEFAULT_MAX_WEBSOCKET_FRAME_SIZE = 65536;
+
   @Override
   public void start(final Future<Void> result) {
     start();
 
     HttpServer server = vertx.createHttpServer();
+
+    int max_websocket_frame_size = getOptionalIntConfig("maxWebsocketFrameSize", DEFAULT_MAX_WEBSOCKET_FRAME_SIZE);
+    server.setMaxWebSocketFrameSize(max_websocket_frame_size);
 
     if (getOptionalBooleanConfig("ssl", false)) {
       server.setSSL(true).setKeyStorePassword(getOptionalStringConfig("key_store_password", "wibble"))
